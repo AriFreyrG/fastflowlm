@@ -24,7 +24,7 @@ makedepends=(
     'ninja'
     'pkg-config'
     'rust'
-    'uuid.h'
+    'util-linux-libs'
 )
 # amdxdna-dkms is required at runtime for the kernel driver but is an AUR
 # package and cannot be listed as a hard dependency in makepkg. Install it
