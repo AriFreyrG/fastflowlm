@@ -1,0 +1,71 @@
+name: fastflowlm
+base: core24
+version: git
+summary: NPU-accelerated LLM runtime for AMD Ryzen AI
+description: |
+  FastFlowLM (FLM) runs large language models on AMD Ryzen AI NPUs
+  (XDNA2 family: Strix, Strix Halo, Kraken, Gorgon Point) without a
+  GPU. It provides a CLI and an OpenAI-compatible REST server, and
+  supports LLMs, VLMs, audio and embedding models.
+
+  Requires the amdxdna kernel driver and the XRT NPU userspace stack.
+  See https://github.com/FastFlowLM/FastFlowLM/blob/main/docs/linux-getting-started.md
+  for setup instructions.
+
+grade: stable
+confinement: classic
+
+architectures:
+  - build-on: amd64
+    build-for: amd64
+
+apps:
+  flm:
+    command: bin/flm
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib/flm:$LD_LIBRARY_PATH
+
+parts:
+  fastflowlm:
+    plugin: cmake
+    source: .
+    source-subdir: src
+    cmake-generator: Ninja
+    cmake-parameters:
+      - --preset=linux-snap
+      - -DCMAKE_INSTALL_PREFIX=/
+    build-packages:
+      - cargo
+      - git
+      - libavcodec-dev
+      - libavformat-dev
+      - libavutil-dev
+      - libboost-dev
+      - libboost-program-options-dev
+      - libcurl4-openssl-dev
+      - libdrm-dev
+      - libfftw3-dev
+      - libreadline-dev
+      - libswresample-dev
+      - libswscale-dev
+      - libxrt-dev
+      - ninja-build
+      - pkg-config
+      - rustc
+      - uuid-dev
+    stage-packages:
+      - libavcodec60
+      - libavformat60
+      - libavutil58
+      - libboost-program-options1.83.0
+      - libcurl4
+      - libfftw3-double3
+      - libfftw3-single3
+      - libfftw3-long3
+      - libreadline8t64
+      - libswresample4
+      - libswscale7
+      - libxrt-npu2
+    override-pull: |
+      craftctl default
+      git submodule update --init --recursive
