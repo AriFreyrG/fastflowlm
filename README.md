@@ -19,6 +19,8 @@ Run large language models — now with **Vision**, **Audio**, **Embedding** and 
 
 > FastFlowLM (FLM) supports all Ryzen™ AI Series chips with XDNA2 NPUs (Strix, Strix Halo, Kraken, and Gorgon Point).
 
+> **Architecture note:** FLM requires an **x86-64 (amd64)** CPU. The NPU kernel libraries are pre-compiled for x86-64 only; ARM64 and other architectures are not currently supported.
+
 ---
 
 ## 🔗 Quick Links

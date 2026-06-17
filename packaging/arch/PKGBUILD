@@ -1,0 +1,68 @@
+# Maintainer: FastFlowLM Team <noreply@fastflowlm.com>
+pkgname=fastflowlm
+pkgver=0.9.43
+pkgrel=1
+pkgdesc="NPU-accelerated LLM runtime for AMD Ryzen AI (XDNA2)"
+arch=('x86_64')
+url="https://github.com/FastFlowLM/FastFlowLM"
+license=('MIT')
+depends=(
+    'boost-libs'
+    'curl'
+    'fftw'
+    'ffmpeg'
+    'readline'
+    'xrt'
+    'xrt-plugin-amdxdna'
+)
+makedepends=(
+    'boost'
+    'cargo'
+    'cmake'
+    'git'
+    'libdrm'
+    'ninja'
+    'pkg-config'
+    'rust'
+    'util-linux-libs'
+)
+# amdxdna-dkms is required at runtime for the kernel driver but is an AUR
+# package and cannot be listed as a hard dependency in makepkg. Install it
+# separately before running flm:
+#   yay -S amdxdna-dkms
+optdepends=('amdxdna-dkms: kernel driver required for NPU access')
+provides=('flm')
+source=("${pkgname}::git+${url}.git#tag=v${pkgver}")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "${srcdir}/${pkgname}"
+    git describe --tags --always | sed 's/^v//'
+}
+
+prepare() {
+    cd "${srcdir}/${pkgname}"
+    git submodule update --init --recursive
+}
+
+build() {
+    cd "${srcdir}/${pkgname}/src"
+    cmake --preset linux-default \
+        -DCMAKE_INSTALL_PREFIX=/opt/fastflowlm \
+        -DFLM_VERSION="${pkgver}" \
+        -DNPU_VERSION="32.0.203.304"
+    cmake --build build -j"$(nproc)"
+}
+
+package() {
+    cd "${srcdir}/${pkgname}/src"
+    DESTDIR="${pkgdir}" cmake --install build --prefix=/opt/fastflowlm
+
+    # Symlink into PATH
+    install -d "${pkgdir}/usr/bin"
+    ln -sf /opt/fastflowlm/bin/flm "${pkgdir}/usr/bin/flm"
+
+    # License
+    install -Dm644 "${srcdir}/${pkgname}/LICENSE_RUNTIME.txt" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

@@ -89,6 +89,14 @@ jobs:
           mv ../fastflowlm_${DEB_VERSION}_amd64.deb ./fastflowlm_${DEB_VERSION}_${{ matrix.distro }}${{ matrix.version }}_amd64.deb
           ls -lah ./fastflowlm_${DEB_VERSION}_${{ matrix.distro }}${{ matrix.version }}_amd64.deb
 
+      - name: Smoke-test installed binary
+        working-directory: ${{ github.workspace }}
+        env:
+          DEB_VERSION: ${{ steps.get_version.outputs.deb_version }}
+        run: |
+          apt-get install -y ./fastflowlm_${DEB_VERSION}_${{ matrix.distro }}${{ matrix.version }}_amd64.deb
+          flm --version
+
       - name: Upload Debian package artifact
         uses: actions/upload-artifact@v4
         with:

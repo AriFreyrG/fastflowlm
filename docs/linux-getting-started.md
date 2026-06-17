@@ -2,6 +2,8 @@
 
 This guide will help you get started with FastFlowLM on Linux, including setup for various distributions and NPU (Neural Processing Unit) support.
 
+> **Architecture:** FastFlowLM requires an **x86-64 (amd64)** processor. The NPU kernel libraries are pre-compiled for x86-64 only. ARM64 and other architectures are not currently supported.
+
 ## Supported Distributions
 - Ubuntu 24.04 LTS
 - Ubuntu 25.10
@@ -11,9 +13,9 @@ This guide will help you get started with FastFlowLM on Linux, including setup f
 ---
 
 ## Prerequisites
+- An **AMD Ryzen AI** processor with an XDNA2 NPU (Strix, Strix Halo, Kraken, or Gorgon Point)
 - `amdxdna` driver (included in kernel 7.0+, or via `amdxdna-dkms`)
 - NPU firmware version 1.1.0.0 or later
-- Python 3.8+
 - XRT stack from AMD
 
 ---
@@ -121,8 +123,27 @@ In short: if 1.1 firmware breaks probing on stock 6.19, do not keep forcing the 
 
 1. Ensure all required development packages are installed:
    ```sh
-   sudo apt install ninja
-   sudo apt install libavformat-dev  libavutil-dev libavcodec-dev libswresample-dev libswscale-dev libxrt-dev uuid-dev libdrm-dev
+   sudo apt install \
+     build-essential \
+     cargo \
+     cmake \
+     git \
+     libavcodec-dev \
+     libavformat-dev \
+     libavutil-dev \
+     libboost-dev \
+     libboost-program-options-dev \
+     libcurl4-openssl-dev \
+     libdrm-dev \
+     libfftw3-dev \
+     libreadline-dev \
+     libswresample-dev \
+     libswscale-dev \
+     libxrt-dev \
+     ninja-build \
+     pkg-config \
+     rustc \
+     uuid-dev
    ```
 
 2. Clone the repository and pull all submodules:
